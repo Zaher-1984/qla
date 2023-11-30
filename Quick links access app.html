@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Links Access App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            font-size: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            font-size: 20px;<!--Ttile font size-->
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        #linkForm input[type="text"] {
+            width: calc(50% - 5px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+        }
+
+        #linkForm button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+	   font-weight: bold; /* Set the font weight to bold for description */
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: #337ab7;
+            font-weight: normal;<--this is font weight for the links-->
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .edit-link,
+        .delete-link {
+            cursor: pointer;
+            color: #337ab7;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quick Links App</h1>
+    <p>Developed by Zaher Alashker 😉 zalashker@iom.int</p>
+
+    <form id="linkForm">
+        <input type="text" id="descInput" placeholder="Enter Description">
+        <input type="text" id="linkInput" placeholder="Enter URL">
+        <button type="button" onclick="addLink()">Add Link</button>
+    </form>
+
+    <table id="linkTable">
+        <tr>
+            <th>Description</th>
+            <th>Links</th>
+            <th>Actions</th>
+        </tr>
+    </table>
+
+    <script>
+        let linksData = JSON.parse(localStorage.getItem('storedLinksData')) || [];
+
+        function addLink() {
+            const descInput = document.getElementById('descInput');
+            const linkInput = document.getElementById('linkInput');
+            const linkDesc = descInput.value.trim();
+            const linkUrl = linkInput.value.trim();
+
+            if (linkUrl !== '') {
+                linksData.push({ description: linkDesc, url: linkUrl });
+                localStorage.setItem('storedLinksData', JSON.stringify(linksData));
+                displayLinks();
+                descInput.value = '';
+                linkInput.value = '';
+            }
+        }
+
+        function displayLinks() {
+            const linkTable = document.getElementById('linkTable');
+            linkTable.innerHTML = '';
+
+            linksData.forEach((link, index) => {
+                const newRow = document.createElement('tr');
+
+                const descCell = document.createElement('td');
+                descCell.textContent = link.description || '';
+                newRow.appendChild(descCell);
+
+                const linkCell = document.createElement('td');
+                const linkItem = document.createElement('a');
+                linkItem.href = link.url;
+                linkItem.textContent = link.url;
+                linkItem.target = '_blank';
+
+                linkCell.appendChild(linkItem);
+                newRow.appendChild(linkCell);
+
+                const actionCell = document.createElement('td');
+                const editLink = document.createElement('span');
+                editLink.textContent = 'Edit';
+                editLink.classList.add('edit-link');
+                editLink.onclick = () => editLinkData(index);
+
+                const deleteLink = document.createElement('span');
+                deleteLink.textContent = 'Delete';
+                deleteLink.classList.add('delete-link');
+                deleteLink.onclick = () => deleteLinkData(index);
+
+                actionCell.appendChild(editLink);
+                actionCell.appendChild(deleteLink);
+                newRow.appendChild(actionCell);
+
+                linkTable.appendChild(newRow);
+            });
+        }
+
+        function editLinkData(index) {
+            const newDescription = prompt('Enter new description:');
+            const newURL = prompt('Enter new URL:');
+
+            if (newDescription !== null && newURL !== null) {
+                linksData[index] = { description: newDescription, url: newURL };
+                localStorage.setItem('storedLinksData', JSON.stringify(linksData));
+                displayLinks();
+            }
+        }
+
+        function deleteLinkData(index) {
+            const confirmation = confirm('Are you sure you want to delete this link?');
+
+            if (confirmation) {
+                linksData.splice(index, 1);
+                localStorage.setItem('storedLinksData', JSON.stringify(linksData));
+                displayLinks();
+            }
+        }
+
+        window.onload = displayLinks;
+    </script>
+</body>
+</html>
