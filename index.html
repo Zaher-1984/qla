@@ -125,43 +125,46 @@
         }
 
         function displayLinks() {
-            const linkTable = document.getElementById('linkTable');
-            linkTable.innerHTML = '';
+    const linkTable = document.getElementById('linkTable');
+    linkTable.innerHTML = '';
 
-            linksData.forEach((link, index) => {
-                const newRow = document.createElement('tr');
+    linksData.forEach((link, index) => {
+        const newRow = document.createElement('tr');
 
-                const descCell = document.createElement('td');
-                descCell.textContent = link.description || '';
-                newRow.appendChild(descCell);
+        const descCell = document.createElement('td');
+        descCell.textContent = link.description || '';
+        newRow.appendChild(descCell);
 
-                const linkCell = document.createElement('td');
-                const linkItem = document.createElement('a');
-                linkItem.href = link.url;
-                linkItem.textContent = link.url;
-                linkItem.target = '_blank';
+        const linkCell = document.createElement('td');
+        const linkItem = document.createElement('a');
+        const displayedUrl = link.url.length > 200? `${link.url.substring(0, 200)}...` : link.url;
+        linkItem.href = link.url;
+        linkItem.textContent = displayedUrl;
+        linkItem.title = link.url; // Add title attribute to display full URL on hover
+        linkItem.target = '_blank';
 
-                linkCell.appendChild(linkItem);
-                newRow.appendChild(linkCell);
+        linkCell.appendChild(linkItem);
+        newRow.appendChild(linkCell);
 
-                const actionCell = document.createElement('td');
-                const editLink = document.createElement('span');
-                editLink.textContent = 'Edit';
-                editLink.classList.add('edit-link');
-                editLink.onclick = () => editLinkData(index);
+        const actionCell = document.createElement('td');
+        const editLink = document.createElement('span');
+        editLink.textContent = 'Edit';
+        editLink.classList.add('edit-link');
+        editLink.onclick = () => editLinkData(index);
 
-                const deleteLink = document.createElement('span');
-                deleteLink.textContent = 'Delete';
-                deleteLink.classList.add('delete-link');
-                deleteLink.onclick = () => deleteLinkData(index);
+        const deleteLink = document.createElement('span');
+        deleteLink.textContent = 'Delete';
+        deleteLink.classList.add('delete-link');
+        deleteLink.onclick = () => deleteLinkData(index);
 
-                actionCell.appendChild(editLink);
-                actionCell.appendChild(deleteLink);
-                newRow.appendChild(actionCell);
+        actionCell.appendChild(editLink);
+        actionCell.appendChild(deleteLink);
+        newRow.appendChild(actionCell);
 
-                linkTable.appendChild(newRow);
-            });
-        }
+        linkTable.appendChild(newRow);
+    });
+}
+
 
         function editLinkData(index) {
             const newDescription = prompt('Enter new description:');
